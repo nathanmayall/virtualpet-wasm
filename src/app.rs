@@ -5,19 +5,11 @@ use egui::{Color32, RichText};
 use crate::Pet;
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
+#[derive(Default)]
 pub struct PetApp {
     // this how you opt-out of serialization of a member
     #[serde(skip)]
     pet: Pet,
-}
-
-impl Default for PetApp {
-    fn default() -> Self {
-        Self {
-            // Example stuff:
-            pet: Pet::default(),
-        }
-    }
 }
 
 impl PetApp {

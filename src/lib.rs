@@ -15,7 +15,7 @@ impl Default for Pet {
     fn default() -> Self {
         Self {
             // Example stuff:
-            name: "".to_owned(),
+            name: "Rusty".to_owned(),
             age: 0,
             hunger: 0,
             fitness: 10,
