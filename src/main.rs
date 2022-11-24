@@ -9,7 +9,7 @@ fn main() {
 
     let native_options = eframe::NativeOptions::default();
     eframe::run_native(
-        "eframe template",
+        "Virtualpet rs",
         native_options,
         Box::new(|cc| Box::new(virtualpet_wasm::PetApp::new(cc))),
     );

@@ -2,7 +2,9 @@
 
 mod app;
 pub use app::PetApp;
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Deserialize, PartialEq, Eq, Serialize)]
 pub struct Pet {
     pub name: String,
     pub age: i8,
@@ -14,7 +16,6 @@ pub struct Pet {
 impl Default for Pet {
     fn default() -> Self {
         Self {
-            // Example stuff:
             name: "Rusty".to_owned(),
             age: 0,
             hunger: 0,
@@ -29,9 +30,8 @@ impl Pet {
         self.hunger < 10 && self.fitness >= 0 && self.age < 30
     }
 
-    pub fn adopt_child(&mut self, child: Pet) -> &Vec<Pet> {
+    pub fn adopt_child(&mut self, child: Pet) {
         self.children.push(child);
-        &self.children
     }
     pub fn status(&self) -> String {
         format!(

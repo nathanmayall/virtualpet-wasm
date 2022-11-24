@@ -1,4 +1,4 @@
-var cacheName = "egui-template-pwa";
+var cacheName = "virtualpet-pwa";
 var filesToCache = [
   "./",
   "./index.html",

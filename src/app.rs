@@ -3,12 +3,11 @@
 use egui::{Color32, RichText};
 
 use crate::Pet;
-#[derive(serde::Deserialize, serde::Serialize)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Default, Deserialize, Serialize)]
 #[serde(default)]
-#[derive(Default)]
 pub struct PetApp {
-    // this how you opt-out of serialization of a member
-    #[serde(skip)]
     pet: Pet,
 }
 
@@ -29,21 +28,26 @@ impl PetApp {
 }
 
 impl eframe::App for PetApp {
-    /// Called by the frame work to save state before shutdown.
-    fn save(&mut self, storage: &mut dyn eframe::Storage) {
-        eframe::set_value(storage, eframe::APP_KEY, self);
-    }
-
     /// Called each time the UI needs repainting, which may be many times per second.
     /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let Self { pet } = self;
 
-        let pet_status = if pet.is_alive() {
-            RichText::new("Alive").color(Color32::GREEN)
+        const STATUS_TEXT_SIZE: f32 = 48.;
+
+        let dead_alive_text = if pet.is_alive() {
+            RichText::new("Alive")
+                .size(STATUS_TEXT_SIZE)
+                .color(Color32::GREEN)
+                .underline()
         } else {
-            RichText::new("Dead").color(Color32::RED)
+            RichText::new("Dead")
+                .size(STATUS_TEXT_SIZE)
+                .color(Color32::RED)
+                .underline()
         };
+
+        let pet_status_text = RichText::new(format!("{} is:", pet.name)).size(STATUS_TEXT_SIZE);
 
         // Examples of how to create different panels and windows.
         // Pick whichever suits you.
@@ -66,7 +70,7 @@ impl eframe::App for PetApp {
             .resizable(false)
             .show(ctx, |ui| {
                 ui.heading("Pet Actions");
-                ui.set_max_width(175.0);
+                ui.set_max_width(175.);
 
                 ui.horizontal(|ui| {
                     ui.label("Pet Name: ");
@@ -80,29 +84,95 @@ impl eframe::App for PetApp {
 
         egui::CentralPanel::default().show(ctx, |ui| {
             // The central panel the region left after adding TopPanel's and SidePanel's
-
             egui::warn_if_debug_build(ui);
             ui.heading("Pet Menu");
-            ui.with_layout(egui::Layout::top_down(egui::Align::Center), |ui| {
-                ui.label(pet.status());
-                if ui.button("Walk").clicked() {
-                    pet.walk();
-                }
-                if ui.button("Feed").clicked() {
-                    pet.feed()
-                };
-                if ui.button("Grow Up").clicked() {
-                    pet.grow_up()
-                };
-            });
+            if pet.is_alive() {
+                ui.with_layout(egui::Layout::top_down(egui::Align::Center), |ui| {
+                    ui.set_min_width(300.);
+                    ui.label(pet.status());
+                    ui.add_space(10.);
+                    ui.scope(|ui| {
+                        ui.style_mut().override_text_style = Some(egui::TextStyle::Heading);
+
+                        let walk_button = ui.add_sized([120., 20.], egui::Button::new("Walk"));
+                        ui.add_space(10.);
+                        let feed_button = ui.add_sized([120., 20.], egui::Button::new("Feed"));
+                        ui.add_space(10.);
+                        let grow_button = ui.add_sized([120., 20.], egui::Button::new("Grow Up"));
+                        ui.add_space(10.);
+
+                        if walk_button.clicked() {
+                            pet.walk();
+                        }
+                        if feed_button.clicked() {
+                            pet.feed()
+                        };
+                        if grow_button.clicked() {
+                            pet.grow_up()
+                        };
+                    });
+                    if pet.age >= 10 {
+                        ui.add_space(10.);
+                        let child_button = ui.add_sized(
+                            [150., 40.],
+                            egui::Button::new(
+                                RichText::new("Have Child").heading().color(Color32::BLACK),
+                            )
+                            .fill(Color32::GREEN),
+                        );
+                        ui.add_space(10.);
+                        if child_button.clicked() {
+                            todo!();
+                        }
+                    }
+                });
+            }
             ui.separator();
+            ui.add_space(20.);
             ui.horizontal(|ui| {
-                ui.label(format!("{} is:", pet.name));
-                ui.label(pet_status);
-                if ui.button("Reset").clicked() {
-                    *pet = Pet::default()
-                };
+                ui.label(pet_status_text);
+                ui.label(dead_alive_text);
             });
+            if ui.button("Reset").clicked() {
+                *pet = Pet::default()
+            };
+            ui.allocate_space(ui.available_size());
         });
     }
+
+    /// Called by the frame work to save state before shutdown.
+    fn save(&mut self, storage: &mut dyn eframe::Storage) {
+        eframe::set_value(storage, eframe::APP_KEY, self);
+    }
+
+    fn auto_save_interval(&self) -> std::time::Duration {
+        std::time::Duration::from_secs(1)
+    }
+
+    fn max_size_points(&self) -> egui::Vec2 {
+        egui::Vec2::INFINITY
+    }
+
+    fn clear_color(&self, _visuals: &egui::Visuals) -> egui::Rgba {
+        // NOTE: a bright gray makes the shadows of the windows look weird.
+        // We use a bit of transparency so that if the user switches on the
+        // `transparent()` option they get immediate results.
+        egui::Color32::from_rgba_unmultiplied(12, 12, 12, 180).into()
+
+        // _visuals.window_fill() would also be a natural choice
+    }
+
+    fn persist_native_window(&self) -> bool {
+        true
+    }
+
+    fn persist_egui_memory(&self) -> bool {
+        true
+    }
+
+    fn warm_up_enabled(&self) -> bool {
+        false
+    }
+
+    fn post_rendering(&mut self, _window_size_px: [u32; 2], _frame: &eframe::Frame) {}
 }
