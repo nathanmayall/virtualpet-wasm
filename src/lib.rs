@@ -24,7 +24,6 @@ impl Default for Pet {
     }
 }
 
-
 impl Pet {
     pub fn is_alive(&self) -> bool {
         self.hunger < 10 && self.fitness >= 0 && self.age < 30

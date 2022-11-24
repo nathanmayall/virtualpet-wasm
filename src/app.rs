@@ -1,7 +1,6 @@
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 // if we add new fields, give them default values when deserializing old state
-
-use egui::{RichText, Color32};
+use egui::{Color32, RichText};
 
 use crate::Pet;
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -16,7 +15,7 @@ impl Default for PetApp {
     fn default() -> Self {
         Self {
             // Example stuff:
-            pet: Pet::default()
+            pet: Pet::default(),
         }
     }
 }
@@ -48,10 +47,10 @@ impl eframe::App for PetApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let Self { pet } = self;
 
-        let pet_status = if pet.is_alive() { 
+        let pet_status = if pet.is_alive() {
             RichText::new("Alive").color(Color32::GREEN)
-        } else { 
-            RichText::new("Dead").color(Color32::RED) 
+        } else {
+            RichText::new("Dead").color(Color32::RED)
         };
 
         // Examples of how to create different panels and windows.
@@ -76,12 +75,12 @@ impl eframe::App for PetApp {
             .show(ctx, |ui| {
                 ui.heading("Pet Actions");
                 ui.set_max_width(175.0);
-            
+
                 ui.horizontal(|ui| {
                     ui.label("Pet Name: ");
                     ui.text_edit_singleline(&mut pet.name);
                 });
-                
+
                 ui.with_layout(egui::Layout::bottom_up(egui::Align::Center), |ui| {
                     egui::global_dark_light_mode_buttons(ui);
                 });
@@ -89,23 +88,29 @@ impl eframe::App for PetApp {
 
         egui::CentralPanel::default().show(ctx, |ui| {
             // The central panel the region left after adding TopPanel's and SidePanel's
-            
+
             egui::warn_if_debug_build(ui);
             ui.heading("Pet Menu");
             ui.with_layout(egui::Layout::top_down(egui::Align::Center), |ui| {
                 ui.label(pet.status());
-                if ui.button("Walk").clicked(){ pet.walk(); }
-                if ui.button("Feed").clicked() { pet.feed() };
-                if ui.button("Grow Up").clicked() {pet.grow_up()};
+                if ui.button("Walk").clicked() {
+                    pet.walk();
+                }
+                if ui.button("Feed").clicked() {
+                    pet.feed()
+                };
+                if ui.button("Grow Up").clicked() {
+                    pet.grow_up()
+                };
             });
             ui.separator();
-                ui.horizontal(|ui| {
-                    ui.label(format!("{} is:", pet.name));
-                    ui.label(pet_status);
-                    if ui.button("Reset").clicked(){ *pet = Pet::default() };
-                });
+            ui.horizontal(|ui| {
+                ui.label(format!("{} is:", pet.name));
+                ui.label(pet_status);
+                if ui.button("Reset").clicked() {
+                    *pet = Pet::default()
+                };
+            });
         });
-
-
     }
 }
