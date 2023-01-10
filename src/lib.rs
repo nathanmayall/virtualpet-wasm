@@ -10,7 +10,7 @@ pub struct Pet {
     pub age: i8,
     pub hunger: i8,
     pub fitness: i8,
-    pub children: Vec<Pet>,
+    pub children: Vec<String>,
 }
 
 impl Default for Pet {
@@ -30,8 +30,8 @@ impl Pet {
         self.hunger < 10 && self.fitness >= 0 && self.age < 30
     }
 
-    pub fn adopt_child(&mut self, child: Pet) {
-        self.children.push(child);
+    pub fn adopt_child(&mut self, child_name: String) {
+        self.children.push(child_name);
     }
     pub fn status(&self) -> String {
         format!(

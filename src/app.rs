@@ -51,7 +51,6 @@ impl eframe::App for PetApp {
 
         // Examples of how to create different panels and windows.
         // Pick whichever suits you.
-        // Tip: a good default choice is to just keep the `CentralPanel`.
         // For inspiration and more examples, go to https://emilk.github.io/egui
 
         #[cfg(not(target_arch = "wasm32"))] // no File->Quit on web pages!
@@ -122,9 +121,17 @@ impl eframe::App for PetApp {
                         );
                         ui.add_space(10.);
                         if child_button.clicked() {
-                            todo!();
-                        }
-                    }
+                            let old_pet_name = pet.name.to_string();
+                            let older_children = pet.children.clone();
+                            *pet = Pet::default();
+
+                            for child in older_children {
+                                pet.adopt_child(child)
+                            }
+
+                            pet.adopt_child(old_pet_name);
+                        };
+                    };
                 });
             }
             ui.separator();
@@ -133,9 +140,18 @@ impl eframe::App for PetApp {
                 ui.label(pet_status_text);
                 ui.label(dead_alive_text);
             });
-            if ui.button("Reset").clicked() {
-                *pet = Pet::default()
+            let reset_button = ui.add_sized([120., 20.], egui::Button::new("Reset"));
+            if reset_button.clicked() {
+                *pet = Pet::default();
             };
+            if !pet.children.is_empty() {
+                ui.heading("Children:");
+
+                for child in &*pet.children {
+                    ui.label(child.to_owned());
+                }
+            }
+
             ui.allocate_space(ui.available_size());
         });
     }
