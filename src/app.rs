@@ -169,15 +169,6 @@ impl eframe::App for PetApp {
         egui::Vec2::INFINITY
     }
 
-    fn clear_color(&self, _visuals: &egui::Visuals) -> egui::Rgba {
-        // NOTE: a bright gray makes the shadows of the windows look weird.
-        // We use a bit of transparency so that if the user switches on the
-        // `transparent()` option they get immediate results.
-        egui::Color32::from_rgba_unmultiplied(12, 12, 12, 180).into()
-
-        // _visuals.window_fill() would also be a natural choice
-    }
-
     fn persist_native_window(&self) -> bool {
         true
     }

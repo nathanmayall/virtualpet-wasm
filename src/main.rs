@@ -3,7 +3,7 @@
 
 // When compiling natively:
 #[cfg(not(target_arch = "wasm32"))]
-fn main() {
+fn main() -> eframe::Result<()> {
     // Log to stdout (if you run with `RUST_LOG=debug`).
     tracing_subscriber::fmt::init();
 
@@ -12,7 +12,7 @@ fn main() {
         "Virtualpet rs",
         native_options,
         Box::new(|cc| Box::new(virtualpet_wasm::PetApp::new(cc))),
-    );
+    )
 }
 
 // when compiling to web using trunk.
