@@ -20,7 +20,7 @@ serde = { version = "1.0.159", features = ["derive"] } # You only need this if y
 
 # native:
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-tracing-subscriber = "0.3.16"
+tracing-subscriber = "0.3.17"
 
 # web:
 [target.'cfg(target_arch = "wasm32")'.dependencies]
