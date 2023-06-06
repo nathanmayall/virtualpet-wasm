@@ -17,6 +17,7 @@ eframe = { version = "0.21.3", features = [
     "persistence",   # Enable restoring app state when restarting the app.
 ] }
 serde = { version = "1.0.162", features = ["derive"] } # You only need this if you want app persistence
+wgpu = { version = "0.16.0", features = ["webgl"] }
 
 # native:
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
